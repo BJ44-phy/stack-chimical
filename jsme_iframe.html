@@ -2,17 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <!-- Utilisation du lien officiel pour garantir le type MIME JavaScript -->
+    <!-- Utilisation du lien officiel pour charger la bibliothèque -->
     <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 10px; background: white; text-align: center; }
-        /* On définit une taille fixe pour éviter le rectangle blanc vide */
         #jsme_container { 
-            width: 420px; 
-            height: 330px; 
-            margin: 0 auto; 
-            border: 1px solid #999;
-            background-color: #fafafa;
+            width: 420px; height: 330px; margin: 0 auto; 
+            border: 1px solid #999; background-color: #fafafa;
         }
         #output { 
             margin: 10px auto; padding: 8px; width: 400px;
@@ -28,18 +24,27 @@
     <div id="output">En attente de dessin...</div>
 
     <script>
-        // Cette fonction doit être nommée EXACTEMENT ainsi
+        // Cette fonction est appelée automatiquement par le script externe
         function jsmeOnLoad() {
-            // Création de l'applet dans le div ID "jsme_container"
-            window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
-                "options" : "oldlook,nocanonize"
-            });
+            startJSME();
+        }
 
-            // Détection des changements pour afficher le SMILES[cite: 1]
-            window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
-                var smiles = event.src.smiles();
-                document.getElementById("output").innerText = smiles;
-            });
+        function startJSME() {
+            // Sécurité : on vérifie si JSMe est bien défini avant de l'utiliser
+            if (typeof JSMe !== 'undefined') {
+                window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
+                    "options" : "oldlook,nocanonize"
+                });
+
+                // Callback pour les SMILES
+                window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
+                    var smiles = event.src.smiles();
+                    document.getElementById("output").innerText = smiles;
+                });
+            } else {
+                // Si JSMe n'est pas encore là, on réessaie dans 100ms
+                setTimeout(startJSME, 100);
+            }
         }
     </script>
 </body>
