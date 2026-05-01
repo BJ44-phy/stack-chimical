@@ -2,14 +2,21 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <!-- On utilise la source officielle permanente pour éviter les erreurs MIME -->
+    <!-- Utilisation du lien officiel pour garantir le type MIME JavaScript -->
     <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
     <style>
-        body { font-family: sans-serif; margin: 5px; background: white; text-align: center; }
-        #jsme_container { width: 420px; height: 330px; margin: 0 auto; border: 1px solid #ccc; }
+        body { font-family: sans-serif; margin: 0; padding: 10px; background: white; text-align: center; }
+        /* On définit une taille fixe pour éviter le rectangle blanc vide */
+        #jsme_container { 
+            width: 420px; 
+            height: 330px; 
+            margin: 0 auto; 
+            border: 1px solid #999;
+            background-color: #fafafa;
+        }
         #output { 
-            margin: 10px auto; padding: 10px; width: 90%;
-            background: #f8f9fa; border: 1px solid #ddd;
+            margin: 10px auto; padding: 8px; width: 400px;
+            background: #eee; border: 1px solid #ccc;
             font-family: monospace; font-size: 1.1em; min-height: 1.2em;
         }
     </style>
@@ -18,17 +25,17 @@
     <strong>Dessinez votre molécule</strong>
     <div id="jsme_container"></div>
     <div style="font-size: 0.9em; margin-top: 10px;">Votre code SMILES (à copier-coller) :</div>
-    <div id="output">Le code apparaîtra ici...</div>
+    <div id="output">En attente de dessin...</div>
 
     <script>
-        // Cette fonction est le standard pour JSME
+        // Cette fonction doit être nommée EXACTEMENT ainsi
         function jsmeOnLoad() {
-            // Création de l'instance dans le div "jsme_container"[cite: 1]
+            // Création de l'applet dans le div ID "jsme_container"
             window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
                 "options" : "oldlook,nocanonize"
             });
 
-            // Mise à jour automatique de la zone de texte
+            // Détection des changements pour afficher le SMILES[cite: 1]
             window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
                 var smiles = event.src.smiles();
                 document.getElementById("output").innerText = smiles;
