@@ -2,9 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
+    <!-- On change la source vers le serveur de l'auteur original -->
+    <script type="text/javascript" src="https://peter-ertl.com/jsme/JSME_2017-08-11/jsme/jsme.nocache.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #f0f0f0; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background-color: #ffffff; 
+        }
         #jsme_container { width: 100vw; height: 100vh; }
     </style>
 </head>
@@ -12,24 +16,22 @@
     <div id="jsme_container"></div>
 
     <script>
+        // Cette fonction est le point d'entrée obligatoire pour JSME
         function jsmeOnLoad() {
-            // On attend un tout petit peu pour être sûr que JSMe est défini
-            var checkJSMe = setInterval(function() {
-                if (typeof JSMe !== 'undefined') {
-                    clearInterval(checkJSMe);
-                    
-                    window.jsmeApplet = new JSMe("jsme_container", "100%", "100%", {
-                        "options" : "oldlook,nocanonize"
-                    });
+            window.jsmeApplet = new JSMe("jsme_container", "100%", "100%", {
+                "options" : "oldlook,nocanonize"
+            });
 
-                    window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
-                        var smiles = event.src.smiles();
-                        window.parent.postMessage({type: "jsme_smiles_update", smiles: smiles}, "*");
-                    });
-                    
-                    console.log("Éditeur chargé avec succès !");
+            // Communication avec STACK
+            window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
+                var smiles = event.src.smiles();
+                if (window.parent) {
+                    window.parent.postMessage({
+                        type: "jsme_smiles_update", 
+                        smiles: smiles
+                    }, "*");
                 }
-            }, 100); 
+            });
         }
     </script>
 </body>
