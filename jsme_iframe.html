@@ -2,61 +2,27 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>JSME Editor for STACK</title>
-    <!-- Chargement de la bibliothèque JSME -->
     <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
-    <style>
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; 
-            background-color: white;
-        }
-        #jsme_container { 
-            width: 100vw; 
-            height: 100vh; 
-        }
-    </style>
 </head>
 <body>
-
     <div id="jsme_container"></div>
-
     <script>
-        // Cette fonction est appelée automatiquement par jsme.nocache.js
         function jsmeOnLoad() {
-            // Initialisation de l'éditeur dans le conteneur
-            // On utilise "100%" pour que l'éditeur occupe toute l'iframe
-            window.jsmeApplet = new JSMe("jsme_container", "100%", "100%", {
+            // On crée l'applet
+            window.jsmeApplet = new JSMe("jsme_container", "100vw", "100vh", {
                 "options" : "oldlook,nocanonize"
             });
 
-            // Écouteur de modifications : envoie le SMILES au parent (Moodle/STACK)
+            // On envoie les changements au parent (STACK)
             window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
                 var smiles = event.src.smiles();
-                
-                // Envoi de l'objet au parent via postMessage
-                window.parent.postMessage({
-                    type: "jsme_smiles_update",
-                    smiles: smiles
-                }, "*");
+                parent.postMessage({type: "jsme_smiles_update", smiles: smiles}, "*");
             });
         }
-
-        // Gestionnaire pour répondre à une demande spécifique du parent (optionnel)
-        window.addEventListener("message", function(event) {
-            if (event.data && event.data.type === "get_smiles") {
-                if (window.jsmeApplet) {
-                    var currentSmiles = window.jsmeApplet.smiles();
-                    window.parent.postMessage({
-                        type: "jsme_smiles_response",
-                        smiles: currentSmiles
-                    }, "*");
-                }
-            }
-        }, false);
     </script>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+        #jsme_container { width: 100%; height: 100%; }
+    </style>
 </body>
 </html>
