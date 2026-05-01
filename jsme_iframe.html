@@ -2,36 +2,34 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>JSME SMILES Generator</title>
     <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background-color: #f4f7f9; }
-        #output_smiles { 
-            margin: 10px auto; padding: 10px; width: 90%;
-            background: #fff; border: 1px solid #aaa; font-weight: bold; 
+        body { font-family: sans-serif; margin: 5px; background: #fff; }
+        #jsme_container { width: 420px; height: 330px; border: 1px solid #ccc; }
+        #output { 
+            margin-top: 10px; padding: 10px; background: #f0f0f0; 
+            border: 1px solid #999; font-family: monospace; font-size: 1.1em;
+            min-height: 20px; word-break: break-all;
         }
     </style>
 </head>
 <body>
-    <h3>Dessinez votre molécule</h3>
-    
-    <!-- Zone de dessin -->
     <div id="jsme_container"></div>
-
-    <p>Votre code SMILES (à copier-coller) :</p>
-    <div id="output_smiles">Le code apparaîtra ici...</div>
+    <div style="margin-top:5px; font-size: 0.85em; color: #666;">Code SMILES à copier :</div>
+    <div id="output">... en attente de dessin ...</div>
 
     <script>
+        // Cette fonction est le coeur du système[cite: 1]
         function jsmeOnLoad() {
-            // Initialisation de l'applet (adapté de votre source)[cite: 1]
+            // On crée l'éditeur dans le container[cite: 1]
             window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
                 "options" : "oldlook,nocanonize"
             });
 
-            // Mise à jour du texte à chaque modification du dessin
+            // On affiche le SMILES en temps réel
             window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
                 var smiles = event.src.smiles();
-                document.getElementById("output_smiles").innerText = smiles;
+                document.getElementById("output").innerText = smiles;
             });
         }
     </script>
