@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>JSME Editor</title>
-    <!-- On charge JSME (source officielle) -->
-    <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 10px; background: white; text-align: center; }
         #jsme_container { 
@@ -14,57 +12,37 @@
         #output { 
             margin: 10px auto; padding: 8px; width: 400px;
             background: #eee; border: 1px solid #ccc;
-            font-family: monospace; font-size: 1.1em;
+            font-family: monospace; font-size: 1.1em; min-height: 20px;
         }
     </style>
+
+    <!-- ÉTAPE 1 : On crée la fonction en premier -->
+    <script>
+        function jsmeOnLoad() {
+            // Création de l'éditeur directement
+            window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
+                "options" : "oldlook,nocanonize"
+            });
+
+            // Mise à jour du SMILES
+            window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
+                var smiles = event.src.smiles();
+                document.getElementById("output").innerText = smiles;
+            });
+            
+            // On enlève le texte de chargement
+            document.getElementById("output").innerText = "Prêt. Dessinez votre molécule.";
+        }
+    </script>
+
+    <!-- ÉTAPE 2 : Seulement MAINTENANT, on charge la bibliothèque JSME -->
+    <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
+
 </head>
 <body>
     <strong>Dessinez votre molécule</strong>
     <div id="jsme_container"></div>
     <div style="font-size: 0.9em; margin-top: 10px;">Votre code SMILES (à copier-coller) :</div>
-    <div id="output">Initialisation forcée...</div>
-
-    <script>
-        // On définit la fonction standard au cas où
-        function jsmeOnLoad() {
-            startEditor();
-        }
-
-        function startEditor() {
-            // Si l'éditeur est déjà lancé, on ne fait rien
-            if (window.jsmeApplet) return;
-
-            // On vérifie si JSMe est disponible en mémoire
-            if (typeof JSMe !== 'undefined') {
-                try {
-                    window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
-                        "options" : "oldlook,nocanonize"
-                    });
-
-                    // Callback pour récupérer les SMILES[cite: 1]
-                    window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
-                        var smiles = event.src.smiles();
-                        document.getElementById("output").innerText = smiles;
-                    });
-                    
-                    document.getElementById("output").innerText = "Prêt (en attente de dessin)";
-                } catch (e) {
-                    document.getElementById("output").innerText = "Erreur d'initialisation : " + e.message;
-                }
-            }
-        }
-
-        // FORCE LE DÉMARRAGE : On vérifie toutes les 200ms si JSMe est chargé
-        // Cela règle le problème du "reste bloqué" vu sur image_578da2.png
-        var forceStart = setInterval(function() {
-            if (typeof JSMe !== 'undefined') {
-                startEditor();
-                clearInterval(forceStart); // On arrête la boucle une fois lancé
-            }
-        }, 200);
-
-        // Sécurité finale : arrêt de la boucle après 10 secondes pour éviter de ramer
-        setTimeout(function() { clearInterval(forceStart); }, 10000);
-    </script>
+    <div id="output">Chargement en cours...</div>
 </body>
 </html>
