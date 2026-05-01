@@ -16,26 +16,26 @@
         }
     </style>
 
-    <!-- ÉTAPE 1 : On crée la fonction en premier -->
     <script>
+        // La bibliothèque JSME appelle cette fonction quand elle est prête
         function jsmeOnLoad() {
-            // Création de l'éditeur directement
-            window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
+            // LA CORRECTION EST ICI : JSApplet.JSME
+            window.jsmeApplet = new JSApplet.JSME("jsme_container", "420px", "330px", {
                 "options" : "oldlook,nocanonize"
             });
 
-            // Mise à jour du SMILES
+            // Affichage du SMILES en direct
             window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
                 var smiles = event.src.smiles();
                 document.getElementById("output").innerText = smiles;
             });
             
-            // On enlève le texte de chargement
+            // On efface le texte de chargement
             document.getElementById("output").innerText = "Prêt. Dessinez votre molécule.";
         }
     </script>
 
-    <!-- ÉTAPE 2 : Seulement MAINTENANT, on charge la bibliothèque JSME -->
+    <!-- Chargement officiel de JSME -->
     <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
 
 </head>
