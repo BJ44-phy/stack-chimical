@@ -2,7 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <!-- On charge la bibliothèque -->
+    <title>JSME Editor</title>
+    <!-- On charge la bibliothèque officielle -->
     <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 10px; background: white; text-align: center; }
@@ -13,7 +14,7 @@
         #output { 
             margin: 10px auto; padding: 8px; width: 400px;
             background: #f0f0f0; border: 1px solid #ccc;
-            font-family: monospace; font-size: 1.1em;
+            font-family: monospace; font-size: 1.1em; min-height: 1.2em;
         }
     </style>
 </head>
@@ -21,29 +22,33 @@
     <strong>Dessinez votre molécule</strong>
     <div id="jsme_container"></div>
     <div style="font-size: 0.9em; margin-top: 10px;">Votre code SMILES (à copier-coller) :</div>
-    <div id="output">En attente de dessin...</div>
+    <div id="output">Chargement de l'éditeur...</div>
 
     <script>
-        // JSME appelle cette fonction automatiquement
+        // JSME appelle cette fonction automatiquement quand il a fini de charger
         function jsmeOnLoad() {
-            // On initialise l'applet avec des options de compatibilité[cite: 1]
-            window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
-                "options" : "oldlook,nocanonize,nozoom"
-            });
-
-            // On définit le callback pour les SMILES[cite: 1]
-            window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
-                var smiles = event.src.smiles();
-                document.getElementById("output").innerText = smiles;
-            });
+            startEditor();
         }
 
-        // Sécurité supplémentaire : si jsmeOnLoad ne s'est pas lancé après 2s
-        setTimeout(function() {
-            if (!window.jsmeApplet && typeof JSMe !== 'undefined') {
-                jsmeOnLoad();
+        function startEditor() {
+            // On vérifie si l'objet JSMe existe vraiment pour éviter l'erreur de l'image image_57f33a.png
+            if (typeof JSMe !== 'undefined') {
+                window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
+                    "options" : "oldlook,nocanonize"
+                });
+
+                // Callback pour récupérer le SMILES
+                window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
+                    var smiles = event.src.smiles();
+                    document.getElementById("output").innerText = smiles;
+                });
+                
+                document.getElementById("output").innerText = "En attente de dessin...";
+            } else {
+                // Si JSMe n'est pas encore défini, on attend 100ms et on réessaie
+                setTimeout(startEditor, 100);
             }
-        }, 2000);
+        }
     </script>
 </body>
 </html>
