@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>JSME</title>
-    <!-- Source alternative via cdnjs (très stable) -->
+    <!-- Source via cdnjs : reconnue comme du vrai JavaScript par les navigateurs -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsme/0.8.0/jsme.nocache.js"></script>
 </head>
 <body style="margin: 0; padding: 0; background: white;">
     <div id="jsme_container"></div>
 
     <script>
+        // Cette fonction doit être globale pour être appelée par la bibliothèque
         function jsmeOnLoad() {
             window.jsmeApplet = new JSMe("jsme_container", "100vw", "100vh", {
                 "options" : "oldlook,nocanonize"
