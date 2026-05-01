@@ -2,15 +2,15 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>JSME</title>
-    <!-- Source via cdnjs : reconnue comme du vrai JavaScript par les navigateurs -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsme/0.8.0/jsme.nocache.js"></script>
+    <title>Editeur JSME</title>
+    <!-- On utilise le lien officiel de l'author hébergé de façon permanente -->
+    <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
 </head>
-<body style="margin: 0; padding: 0; background: white;">
+<body style="margin: 0; padding: 0; background-color: white;">
     <div id="jsme_container"></div>
 
     <script>
-        // Cette fonction doit être globale pour être appelée par la bibliothèque
+        // Force l'affichage même si le chargement est lent
         function jsmeOnLoad() {
             window.jsmeApplet = new JSMe("jsme_container", "100vw", "100vh", {
                 "options" : "oldlook,nocanonize"
