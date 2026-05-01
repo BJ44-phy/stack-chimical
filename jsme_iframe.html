@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>JSME Editor</title>
-    <!-- On charge la bibliothèque officielle -->
+    <!-- On charge JSME (source officielle) -->
     <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 10px; background: white; text-align: center; }
@@ -22,34 +22,49 @@
     <strong>Dessinez votre molécule</strong>
     <div id="jsme_container"></div>
     <div style="font-size: 0.9em; margin-top: 10px;">Votre code SMILES (à copier-coller) :</div>
-    <div id="output">Chargement du moteur chimique...</div>
+    <div id="output">Initialisation forcée...</div>
 
     <script>
-        // Cette fonction est le point d'entrée standard de JSME
+        // On définit la fonction standard au cas où
         function jsmeOnLoad() {
             startEditor();
         }
 
         function startEditor() {
-            // On vérifie si l'objet JSMe existe pour éviter l'erreur de l'image image_579126.png
-            if (typeof JSMe !== 'undefined') {
-                window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
-                    "options" : "oldlook,nocanonize"
-                });
+            // Si l'éditeur est déjà lancé, on ne fait rien
+            if (window.jsmeApplet) return;
 
-                // Liaison pour récupérer les SMILES
-                window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
-                    var smiles = event.src.smiles();
-                    document.getElementById("output").innerText = smiles;
-                });
-                
-                document.getElementById("output").innerText = "Prêt (en attente de dessin)";
-            } else {
-                // Si JSMe n'est pas encore prêt, on attend 100ms et on réessaie
-                console.log("JSMe pas encore défini, nouvelle tentative...");
-                setTimeout(startEditor, 100);
+            // On vérifie si JSMe est disponible en mémoire
+            if (typeof JSMe !== 'undefined') {
+                try {
+                    window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
+                        "options" : "oldlook,nocanonize"
+                    });
+
+                    // Callback pour récupérer les SMILES[cite: 1]
+                    window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
+                        var smiles = event.src.smiles();
+                        document.getElementById("output").innerText = smiles;
+                    });
+                    
+                    document.getElementById("output").innerText = "Prêt (en attente de dessin)";
+                } catch (e) {
+                    document.getElementById("output").innerText = "Erreur d'initialisation : " + e.message;
+                }
             }
         }
+
+        // FORCE LE DÉMARRAGE : On vérifie toutes les 200ms si JSMe est chargé
+        // Cela règle le problème du "reste bloqué" vu sur image_578da2.png
+        var forceStart = setInterval(function() {
+            if (typeof JSMe !== 'undefined') {
+                startEditor();
+                clearInterval(forceStart); // On arrête la boucle une fois lancé
+            }
+        }, 200);
+
+        // Sécurité finale : arrêt de la boucle après 10 secondes pour éviter de ramer
+        setTimeout(function() { clearInterval(forceStart); }, 10000);
     </script>
 </body>
 </html>
