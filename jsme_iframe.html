@@ -2,28 +2,23 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>JSME Editor</title>
-    <!-- On utilise un lien CDN stable -->
-    <script type="text/javascript" src="https://unpkg.com/jsme-editor@0.1.2/dist/jsme.nocache.js"></script>
+    <title>JSME</title>
+    <!-- Source alternative via cdnjs (très stable) -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsme/0.8.0/jsme.nocache.js"></script>
 </head>
-<body style="margin: 0; padding: 0; background-color: white;">
+<body style="margin: 0; padding: 0; background: white;">
     <div id="jsme_container"></div>
 
     <script>
-        // Cette fonction est lancée automatiquement par le script ci-dessus
         function jsmeOnLoad() {
             window.jsmeApplet = new JSMe("jsme_container", "100vw", "100vh", {
                 "options" : "oldlook,nocanonize"
             });
 
-            // Envoi du SMILES au parent (Moodle/STACK)
             window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
                 var smiles = event.src.smiles();
                 if (window.parent) {
-                    window.parent.postMessage({
-                        type: "jsme_smiles_update", 
-                        smiles: smiles
-                    }, "*");
+                    window.parent.postMessage({type: "jsme_smiles_update", smiles: smiles}, "*");
                 }
             });
         }
