@@ -2,31 +2,33 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <!-- On utilise la source officielle permanente pour éviter les erreurs MIME -->
     <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
     <style>
-        body { font-family: sans-serif; margin: 5px; background: #fff; }
-        #jsme_container { width: 420px; height: 330px; border: 1px solid #ccc; }
+        body { font-family: sans-serif; margin: 5px; background: white; text-align: center; }
+        #jsme_container { width: 420px; height: 330px; margin: 0 auto; border: 1px solid #ccc; }
         #output { 
-            margin-top: 10px; padding: 10px; background: #f0f0f0; 
-            border: 1px solid #999; font-family: monospace; font-size: 1.1em;
-            min-height: 20px; word-break: break-all;
+            margin: 10px auto; padding: 10px; width: 90%;
+            background: #f8f9fa; border: 1px solid #ddd;
+            font-family: monospace; font-size: 1.1em; min-height: 1.2em;
         }
     </style>
 </head>
 <body>
+    <strong>Dessinez votre molécule</strong>
     <div id="jsme_container"></div>
-    <div style="margin-top:5px; font-size: 0.85em; color: #666;">Code SMILES à copier :</div>
-    <div id="output">... en attente de dessin ...</div>
+    <div style="font-size: 0.9em; margin-top: 10px;">Votre code SMILES (à copier-coller) :</div>
+    <div id="output">Le code apparaîtra ici...</div>
 
     <script>
-        // Cette fonction est le coeur du système[cite: 1]
+        // Cette fonction est le standard pour JSME
         function jsmeOnLoad() {
-            // On crée l'éditeur dans le container[cite: 1]
+            // Création de l'instance dans le div "jsme_container"[cite: 1]
             window.jsmeApplet = new JSMe("jsme_container", "420px", "330px", {
                 "options" : "oldlook,nocanonize"
             });
 
-            // On affiche le SMILES en temps réel
+            // Mise à jour automatique de la zone de texte
             window.jsmeApplet.setCallBack("AfterStructureModified", function(event) {
                 var smiles = event.src.smiles();
                 document.getElementById("output").innerText = smiles;
